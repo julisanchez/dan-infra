@@ -1,0 +1,56 @@
+services:
+  #Postgres
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: dan
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: dan
+    networks:
+      - infra
+      - app
+    volumes:
+      - ./pg/data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - infra
+
+  #Mongo
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: dan
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+      MONGO_INITDB_DATABASE: dan
+    networks:
+      - infra
+      - app
+    volumes:
+      - ./mongo/db:/data/db
+      - ./mongo/config:/data/configdb
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 
+    networks:
+      - infra
+    
+networks:
+  infra:
+    driver: bridge
+  app:
+    driver: bridge
